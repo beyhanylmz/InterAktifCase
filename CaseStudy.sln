@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soru1", "Soru1\Soru1.csproj", "{A7E20DB8-4B6A-44C5-B38A-D9BEA9CD18ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soru2", "Soru2\Soru2.csproj", "{0DBD79CE-7276-400E-896F-0B9562A85010}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A7E20DB8-4B6A-44C5-B38A-D9BEA9CD18ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7E20DB8-4B6A-44C5-B38A-D9BEA9CD18ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7E20DB8-4B6A-44C5-B38A-D9BEA9CD18ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7E20DB8-4B6A-44C5-B38A-D9BEA9CD18ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DBD79CE-7276-400E-896F-0B9562A85010}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DBD79CE-7276-400E-896F-0B9562A85010}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DBD79CE-7276-400E-896F-0B9562A85010}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DBD79CE-7276-400E-896F-0B9562A85010}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2E02FD56-203C-4BC6-ADF8-D4EB46EA93DD}
+	EndGlobalSection
+EndGlobal

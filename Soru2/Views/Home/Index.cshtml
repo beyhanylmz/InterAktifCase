@@ -1,0 +1,170 @@
+﻿<div class="container">
+
+    <h4 id="message2"></h4>
+
+    <div class="row">
+        <button class="btn btn-primary pull-right" id="kayiteklebutonu">Yeni Kategori Ekle</button>
+    </div>
+
+    <hr />
+    <table id="categorydatatable" class="table table-striped" cellspacing="0" width="100%">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Kategori Adı</th>
+                <th scope="col">Aktif Mi</th>
+                <th scope="col">Siparis</th>
+                <th scope="col">Islemler</th>
+            </tr>
+        </thead>
+        <tbody id="categorylist"></tbody>
+    </table>
+
+
+</div>
+
+<div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryModalLabel">Kategori Ekle/Güncelle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <label class="col-md-4 ">Kategori Adı</label>
+                    <input class="form-control col-md-8" type="text" id="categoryname">
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-4 ">Aktif mi</label>
+                    <input class="form-control col-md-8" type="checkbox" id="isactive" />
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-4 ">Sipariş</label>
+                    <input class="form-control col-md-8" id="order" />
+                </div>
+
+                <h4 id="message"></h4>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnKaydet">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script>
+    var _categoryId = 0;
+
+    function Ajx(type, url, model, func) {
+        $.ajax({
+            type: type,
+            url: url,
+            data: JSON.stringify(model),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: func,
+            error: function (a, b, c) {
+
+            }
+        })
+    }
+
+    function GetCategories() {
+        $.get({
+            url: "/api/Category/GetAll"
+        })
+            .done(function (data) {
+                $("#categorylist").empty();
+                $.each(data, function (i, categorylistesi) {
+
+                    $("#categorylist").append("<tr>" +
+                        "<td class='category'>" + categorylistesi.CategoryName + "</td>" +
+                        "<td class='isactive'>" + categorylistesi.IsActive + "</td>" +
+                        "<td class='order'>" + categorylistesi.Order + "</td>" +
+                        "<td><button class='btn btn-primary col-md-4' onclick='Update(\"" + categorylistesi.CategoryID + "\")'>Düzenle</button>" +
+                        "<button class='btn btn-warning col-md-4' onclick='Delete(\"" + categorylistesi.CategoryID + "\")'>Sil</button></td></tr>"
+                    );
+                });
+
+
+            })
+            .fail(function (e) {
+                debugger;
+            })
+    }
+
+    function Delete(id) {
+        Ajx("DELETE", "/api/Category/Delete?Id=" + id, "", function (e) {
+            if (!e.IsSuccess) {
+                $("#message2").html("<span style='color:red'>" + e.Message + "</span>");
+            } else {
+                $("#message2").html("<span style='color:green'>" + e.Message + "</span>");
+            }
+            GetCategories();
+        })
+
+    }
+
+    function Update(id) {
+        _categoryId = id;
+        Ajx("GET", "/api/Category/Get?Id=" + id, "", function (e) {
+            $("#categoryname").val(e.CategoryName);
+            if (e.IsActive) {
+                $("#isactive").prop("checked", true);
+            }
+            $("#order").val(e.Order);
+
+            $("#categoryModal").modal("show");
+        })
+    }
+
+    function Save() {
+        var model = {
+            CategoryId: _categoryId,
+            Categoryname: $("#categoryname").val(),
+            IsActive: $('#isactive').Checked = true | false,
+            Order: $("#order").val(),
+        }
+
+        Ajx(_categoryId == 0 ? "POST" : "PUT", "/api/Category/" + (_categoryId == 0 ? "Add" : "Update"), model, function (e) {
+            if (!e.IsSuccess) {
+                $("#message").html("<span style='color:red'>" + e.Message + "</span>");
+            } else {
+                $("#message").html("<span style='color:green'>" + e.Message + "</span>");
+            }
+            $("#categoryModal").modal("hide");
+            GetCategories();
+        });
+    }
+
+    function ModalReset() {
+        _categoryId = 0;
+        $("#categoryname").val("");
+        $("#isactive").val("");
+        $("#order").val("");
+        $("#message").html("");
+    }
+
+</script>
+<script>
+    $(document).ready(function () {
+
+        GetCategories();
+
+        $("#kayiteklebutonu").click(function () {
+            ModalReset();
+            $("#categoryModal").modal("show");
+        });
+
+        $("#btnKaydet").click(Save);
+    });
+
+</script>
+

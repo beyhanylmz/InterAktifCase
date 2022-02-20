@@ -1,0 +1,3 @@
+@Imports Soru2_WebApi.Areas.HelpPage.ModelDescriptions
+@ModelType SimpleTypeModelDescription
+@Model.Documentation

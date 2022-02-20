@@ -1,0 +1,205 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ProductList</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <h4 id="message2"></h4>
+        <hr />
+
+        <div class="row">
+            <button class="btn btn-primary pull-right" id="kayiteklebutonu">Yeni Ürün Ekle</button>
+
+        </div>
+        <hr />
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Ürün Adı</th>
+                    <th scope="col">Kategori Adı</th>
+                    <th scope="col">Fiyat</th>
+                    <th scope="col">Stoktaki Ürün Adeti</th>
+                    <th scope="col"> Islemler</th>
+                </tr>
+            </thead>
+            <tbody id="productlist"></tbody>
+        </table>
+
+    </div>
+    <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel">Ürün Ekle/Güncelle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group row">
+                        <label class="col-md-4 ">ProductName</label>
+                        <input type="text" id="productname" class="form-control col-md-8 " name="productname" />
+
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-4 ">Category</label>
+                        <select id="categoryId" class="categoryList col-md-8" name="categoryId" style="font-size: 25px"></select>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-4">Price</label>
+                        <input type="number" name="price" id="price" class="form-control col-md-8" />
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-4">UnitsInStock</label>
+                        <input type="number" name="UnitsInStock" id="unitsinstock" class="form-control col-md-8" />
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                    <button type="button" class="btn btn-primary">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var _productId = 0;
+        var _categoryList = new Array();
+        function Ajx(type, url, model, func) {
+            $.ajax({
+                type: type,
+                url: url,
+                data: JSON.stringify(model),
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                success: func,
+                error: function (a, b, c) {
+
+                }
+            })
+        }
+        function GetText(List, Value) {
+            var text;
+            for (i in List) {
+                if (List[i].Value == Value) {
+                    text = List[i].Text;
+                }
+            }
+            return text;
+        }
+
+        function Load() {
+            $.get({
+                url: "/api/Category/GetAll"
+            }).done(function (categories) {
+                $.each(categories, function (i, category) {
+                    $("#categoryId").append(" <option value=" + category.CategoryID + ">" + category.CategoryName + "</option>");
+                    _categoryList.push({ Value: category.CategoryID, Text: category.CategoryName });
+                })
+                GetProducts();
+            });
+        }
+
+        function GetProducts() {
+            $.get({
+                url: "/api/Product/GetAll"
+            })
+                .done(function (data) {
+                    $("#productlist").empty();
+                    $.each(data, function (i, productlistesi) {
+
+                        $("#productlist").append("<tr>" +
+                            "<td class='product'>" + productlistesi.ProductName + "</td>" +
+                            "<td class='category'>" + GetText(_categoryList, productlistesi.CategoryID) + "</td>" +
+                            "<td class='price'>" + productlistesi.Price + "</td>" +
+                            "<td class='unitsinstock'>" + productlistesi.UnitsInStock + "</td>" +
+                            "<td><button class='btn btn-primary col-md-4' onclick='Update(\"" + productlistesi.ProductID + "\")'>Düzenle</button>" +
+                            "<button class='btn btn-warning col-md-4' onclick='Delete(\"" + productlistesi.ProductID + "\")'>Sil</button></td></tr>"
+                        );
+                    });
+
+
+                })
+                .fail(function (e) {
+                    debugger;
+                })
+        }
+
+
+        function Delete(id) {
+            Ajx("DELETE", "/api/Product/Delete?Id=" + id, "", function (e) {
+                if (!e.IsSuccess) {
+                    $("#message2").html("<span style='color:red'>" + e.Message + "</span>");
+                } else {
+                    $("#message2").html("<span style='color:green'>" + e.Message + "</span>");
+                }
+                GetProducts();
+            })
+
+        }
+
+        function Update(id) {
+            _productId = id;
+            Ajx("GET", "/api/Product/Get?Id=" + id, "", function (e) {
+                $("#productname").val(e.ProductName);
+                $("#categoryId").val(e.CategoryID);
+                $("#price").val(e.Price);
+                $("#unitsinstock").val(e.UnitsInStock);
+                $("#productModal").modal("show");
+            })
+        }
+
+        function Save() {
+            var model = {
+                ProductId: _productId,
+                ProductName: $("#productname").val(),
+                CategoryId: $("select.categoryList").children("option:selected").val(),
+                Price: $('#price').val(),
+                UnitsInStock: $("#unitsinstock").val(),
+            }
+
+            Ajx(_productId == 0 ? "POST" : "PUT", "/api/Product/" + (_productId == 0 ? "Add" : "Update"), model, function (e) {
+                if (!e.IsSuccess) {
+                    $("#message").html("<span style='color:red'>" + e.Message + "</span>");
+                } else {
+                    $("#message").html("<span style='color:green'>" + e.Message + "</span>");
+                }
+                $("#productModal").modal("hide");
+                GetProducts();
+            });
+        }
+
+        function ModalReset() {
+            _productId = 0;
+            $("#productname").val("");
+            $("#price").val("");
+            $("#unitsinstock").val("");
+            $("#message").html("");
+        }
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            Load();
+            $("#kayiteklebutonu").click(function () {
+                ModalReset();
+                $("#productModal").modal("show");
+            });
+            $("#btnKaydet").click(Save);
+        });
+
+    </script>
+
+</body>
+</html>
+
+
+

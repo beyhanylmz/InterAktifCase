@@ -1,0 +1,6 @@
+C:\Users\beyhan\Desktop\BeyhanYilmaz_InteraktifCaseStudy\CaseStudy\Soru1\bin\Debug\Soru1.exe.config
+C:\Users\beyhan\Desktop\BeyhanYilmaz_InteraktifCaseStudy\CaseStudy\Soru1\bin\Debug\Soru1.exe
+C:\Users\beyhan\Desktop\BeyhanYilmaz_InteraktifCaseStudy\CaseStudy\Soru1\bin\Debug\Soru1.pdb
+C:\Users\beyhan\Desktop\BeyhanYilmaz_InteraktifCaseStudy\CaseStudy\Soru1\obj\Debug\Soru1.csprojAssemblyReference.cache
+C:\Users\beyhan\Desktop\BeyhanYilmaz_InteraktifCaseStudy\CaseStudy\Soru1\obj\Debug\Soru1.exe
+C:\Users\beyhan\Desktop\BeyhanYilmaz_InteraktifCaseStudy\CaseStudy\Soru1\obj\Debug\Soru1.pdb
